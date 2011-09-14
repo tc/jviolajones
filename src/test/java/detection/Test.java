@@ -22,8 +22,7 @@ import javax.swing.JPanel;
 
 public class Test extends JFrame{
 	
-	public Test(File img, String XMLFile)
-	{
+	public Test(File img, String XMLFile) throws java.io.FileNotFoundException{
 		Image image=null;
 		try {
 			image = ImageIO.read(img);
