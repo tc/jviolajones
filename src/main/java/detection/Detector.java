@@ -116,98 +116,85 @@ Point size;
 	      //System.out.println(stages.size());
 	      }
 
-	/** Returns the list of detected objects in an image applying the Viola-Jones algorithm.
-	 * 
-	 * The algorithm tests, from sliding windows on the image, of variable size, which regions should be considered as searched objects.
-	 * Please see Wikipedia for a description of the algorithm.
-	 * @param filename The image file to scan.
-	 * @param baseScale The initial ratio between the window size and the Haar classifier size (default 2).
-	 * @param scale_inc The scale increment of the window size, at each step (default 1.25).
-	 * @param increment The shift of the window at each sub-step, in terms of percentage of the window size.
-	 * @return the list of rectangles containing searched objects, expressed in pixels.
-	 */
-	public List<java.awt.Rectangle> getFaces(String filename, float baseScale, float scale_inc,float increment, int min_neighbors,boolean doCannyPruning) throws java.io.FileNotFoundException{
+	public List<java.awt.Rectangle> getFaces(String filename, float baseScale, float scale_inc,float increment, int min_neighbors,boolean doCannyPruning) throws java.io.FileNotFoundException, java.io.IOException{
     return getFaces(new FileInputStream(filename), baseScale, scale_inc, increment, min_neighbors, doCannyPruning);
+  }
+
+	public List<java.awt.Rectangle> getFaces(InputStream input, float baseScale, float scale_inc,float increment, int min_neighbors,boolean doCannyPruning) throws java.io.FileNotFoundException, java.io.IOException{
+    return getFaces(ImageIO.read(input), baseScale, scale_inc, increment, min_neighbors, doCannyPruning);
   }
 
 	/** Returns the list of detected objects in an image applying the Viola-Jones algorithm.
 	 * 
 	 * The algorithm tests, from sliding windows on the image, of variable size, which regions should be considered as searched objects.
 	 * Please see Wikipedia for a description of the algorithm.
-	 * @param input The image as a inputstream to scan.
+	 * @param image bufferedimage input
 	 * @param baseScale The initial ratio between the window size and the Haar classifier size (default 2).
 	 * @param scale_inc The scale increment of the window size, at each step (default 1.25).
 	 * @param increment The shift of the window at each sub-step, in terms of percentage of the window size.
 	 * @return the list of rectangles containing searched objects, expressed in pixels.
 	 */
-	public List<java.awt.Rectangle> getFaces(InputStream input, float baseScale, float scale_inc,float increment, int min_neighbors,boolean doCannyPruning)
+	public List<java.awt.Rectangle> getFaces(BufferedImage image, float baseScale, float scale_inc,float increment, int min_neighbors,boolean doCannyPruning)
 	{
-		try {
-			List<Rectangle> ret=new ArrayList<Rectangle>();
-			BufferedImage image = ImageIO.read(input);
-			int width=image.getWidth();
-			int height=image.getHeight();
-			float maxScale = (Math.min((width+0.f)/size.x,(height+0.0f)/size.y));
-			int[][] grayImage=new int[width][height];
-			int[][] img = new int[width][height];
-			int[][] squares=new int[width][height];
-			for(int i=0;i<width;i++)
-			{
-				int col=0;
-				int col2=0;
-				for(int j=0;j<height;j++)
-				{
-					int c = image.getRGB(i,j);
-					int  red = (c & 0x00ff0000) >> 16;
-					int  green = (c & 0x0000ff00) >> 8;
-					int  blue = c & 0x000000ff;
-					int value=(30*red +59*green +11*blue)/100;
-					img[i][j]=value;
-					grayImage[i][j]=(i>0?grayImage[i-1][j]:0)+col+value;
-					squares[i][j]=(i>0?squares[i-1][j]:0)+col2+value*value;
-					col+=value;
-					col2+=value*value;
-				}
-			}
-			int[][] canny = null;
-			if(doCannyPruning)
-				canny = getIntegralCanny(img);
-			for(float scale=baseScale;scale<maxScale;scale*=scale_inc)
-			{
-				int step=(int) (scale*24*increment);
-				int size=(int) (scale*24);
-				for(int i=0;i<width-size;i+=step)
-				{
-					for(int j=0;j<height-size;j+=step)
-					{
-						if(doCannyPruning)
-						{
-						int edges_density = canny[i+size][j+size]+canny[i][j]-canny[i][j+size]-canny[i+size][j];
-						int d = edges_density/size/size;
-						if(d<20||d>100)
-							continue;
-						}
-						boolean pass=true;
-						int k=0;
-						for(Stage s:stages)
-						{
-							
-							if(!s.pass(grayImage,squares,i,j,scale))
-								{pass=false;
-								//System.out.println("Failed at Stage "+k);
-								break;}
-							k++;
-						}
-						if(pass) ret.add(new Rectangle(i,j,size,size));
-					}
-				}
-			}
-			return merge(ret,min_neighbors);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+    List<Rectangle> ret=new ArrayList<Rectangle>();
+    int width=image.getWidth();
+    int height=image.getHeight();
+    float maxScale = (Math.min((width+0.f)/size.x,(height+0.0f)/size.y));
+    int[][] grayImage=new int[width][height];
+    int[][] img = new int[width][height];
+    int[][] squares=new int[width][height];
+    for(int i=0;i<width;i++)
+    {
+      int col=0;
+      int col2=0;
+      for(int j=0;j<height;j++)
+      {
+        int c = image.getRGB(i,j);
+        int  red = (c & 0x00ff0000) >> 16;
+        int  green = (c & 0x0000ff00) >> 8;
+        int  blue = c & 0x000000ff;
+        int value=(30*red +59*green +11*blue)/100;
+        img[i][j]=value;
+        grayImage[i][j]=(i>0?grayImage[i-1][j]:0)+col+value;
+        squares[i][j]=(i>0?squares[i-1][j]:0)+col2+value*value;
+        col+=value;
+        col2+=value*value;
+      }
+    }
+    int[][] canny = null;
+    if(doCannyPruning)
+      canny = getIntegralCanny(img);
+    for(float scale=baseScale;scale<maxScale;scale*=scale_inc)
+    {
+      int step=(int) (scale*24*increment);
+      int size=(int) (scale*24);
+      for(int i=0;i<width-size;i+=step)
+      {
+        for(int j=0;j<height-size;j+=step)
+        {
+          if(doCannyPruning)
+          {
+          int edges_density = canny[i+size][j+size]+canny[i][j]-canny[i][j+size]-canny[i+size][j];
+          int d = edges_density/size/size;
+          if(d<20||d>100)
+            continue;
+          }
+          boolean pass=true;
+          int k=0;
+          for(Stage s:stages)
+          {
+            
+            if(!s.pass(grayImage,squares,i,j,scale))
+              {pass=false;
+              //System.out.println("Failed at Stage "+k);
+              break;}
+            k++;
+          }
+          if(pass) ret.add(new Rectangle(i,j,size,size));
+        }
+      }
+    }
+    return merge(ret,min_neighbors);
 	}
 	
 	public int[][] getIntegralCanny(int[][] grayImage)
