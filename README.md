@@ -14,11 +14,6 @@ I just added the Canny Prunning algorithm, as in OpenCV, to identify regions unl
 As I've seen some of you have downloaded the jar, I'd like to know if you found it useful (and if it did work !). Why not raise an issue telling what you think about it ?
 
 ## Use
-The runnable jar available in the Downloads section should be called this way :
-
-java -jar jviolajones2.jar imageFileName OpenCVXmlFile
-(Some cascade files, as well as a test image, can be downloaded from the Downloads section.)
-
 If you want to integrate this package in your code, this should work :
 
 ```
