@@ -22,7 +22,7 @@ import javax.swing.JPanel;
 
 public class Test extends JFrame{
 	
-	public Test(File img, String XMLFile) throws java.io.FileNotFoundException{
+	public Test(File img, String XMLFile) throws FileNotFoundException, IOException{
 		Image image=null;
 		try {
 			image = ImageIO.read(img);
