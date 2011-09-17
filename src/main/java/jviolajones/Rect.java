@@ -1,4 +1,4 @@
-package detection;
+package jviolajones;
 
 
 public class Rect {

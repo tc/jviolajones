@@ -1,4 +1,4 @@
-package detection;
+package jviolajones;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;

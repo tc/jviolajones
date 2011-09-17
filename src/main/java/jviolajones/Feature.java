@@ -1,4 +1,4 @@
-package detection;
+package jviolajones;
 
 
 import java.util.ArrayList;

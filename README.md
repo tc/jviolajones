@@ -17,7 +17,7 @@ As I've seen some of you have downloaded the jar, I'd like to know if you found 
 If you want to integrate this package in your code, this should work :
 
 ```
-import detection.Detector;
+import jviolajones.Detector;
 
 String fileName="yourfile.jpg";
 Detector detector=new Detector("haarcascade_frontalface_default.xml");
