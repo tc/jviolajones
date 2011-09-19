@@ -1,4 +1,5 @@
 package jviolajones;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -20,9 +21,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 
-public class Test extends JFrame{
-	
-	public Test(File img, String XMLFile) throws FileNotFoundException, IOException{
+public class DetectorView extends JFrame{
+
+  public static void main(String[] args) throws IOException {
+    new DetectorView(new File(args[0]),args[1]).setVisible(true);
+  }
+
+	public DetectorView(File img, String XMLFile) throws FileNotFoundException, IOException{
 		Image image=null;
 		try {
 			image = ImageIO.read(img);

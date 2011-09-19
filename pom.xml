@@ -4,12 +4,20 @@
  <groupId>jviolajones</groupId>
  <artifactId>jviolajones</artifactId>
  <packaging>jar</packaging>
- <version>1.0.1</version>
+ <version>1.0.2</version>
  <name>jviolajones</name>
 
  <properties>
  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
  </properties>
+
+  <distributionManagement>
+    <repository>
+      <id>thirdparty</id>
+      <name>Third Party</name>
+      <url>http://ops.qwiki.com/nexus/content/repositories/thirdparty</url>
+    </repository>
+  </distributionManagement>
 
  <dependencies>
   <dependency>
@@ -24,6 +32,25 @@
      <scope>test</scope>
    </dependency>
  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2.1</version>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <mainClass>jviolajones.DetectorView</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
 

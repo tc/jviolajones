@@ -32,5 +32,6 @@ public class DetectorTest{
     assertEquals(161.0, second.getHeight(), 0.01);
     assertEquals(237.0, second.getX(), 0.01);
     assertEquals(214.0, second.getY(), 0.01);
+
   }
 }
